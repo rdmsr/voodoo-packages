@@ -1,0 +1,21 @@
+name=xkeyboard-config
+version=2.41
+revision=1
+tarball_url="https://www.x.org/archive/individual/data/xkeyboard-config/xkeyboard-config-${version}.tar.xz"
+tarball_blake2b="f608c30b31c26f2273907f45929a0fe9e44bb9513d45a791be1ff3fb8da5cd56d4fbb182540c47960f16841a30f89fdab0ad87cc41597c02bfd76643fff6857d"
+imagedeps="meson ninja python"
+hostdeps="gcc pkg-config"
+deps="core-libs xorg-xkbcomp"
+
+build() {
+    meson_configure \
+        -Dxorg-rules-symlinks=true
+
+    ninja -j${parallelism}
+}
+
+package() {
+    DESTDIR="${dest_dir}" ninja install
+
+    post_package_strip
+}

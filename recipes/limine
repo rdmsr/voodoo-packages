@@ -1,0 +1,32 @@
+name=limine
+version=7.7.1
+revision=1
+tarball_url="https://github.com/limine-bootloader/limine/releases/download/v${version}/limine-${version}.tar.gz"
+tarball_blake2b="018b8a7d782c74eb4267eed7baedd1c532a0ea270e9b310fb936937e7c3ddb4b498349b50cfb08c830c9414058e17159d04b32b30331572be1470ec1669c05aa"
+source_hostdeps="autoconf automake libtool pkg-config"
+imagedeps="mtools nasm"
+hostdeps="gcc autoconf automake libtool pkg-config"
+deps="core-libs"
+
+regenerate() {
+    autotools_recursive_regen
+}
+
+build() {
+    autotools_configure \
+        --enable-uefi-ia32 \
+        --enable-uefi-x86-64 \
+        --enable-uefi-cd \
+        --enable-bios \
+        --enable-bios-cd \
+        --enable-bios-pxe \
+        TOOLCHAIN_FOR_TARGET=${OS_TRIPLET}
+
+    make -j${parallelism}
+}
+
+package() {
+    DESTDIR="${dest_dir}" make install
+
+    post_package_strip
+}

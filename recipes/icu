@@ -1,0 +1,36 @@
+name=icu
+version=74.2
+revision=1
+tarball_url="https://github.com/unicode-org/icu/releases/download/release-74-2/icu4c-74_2-src.tgz"
+tarball_blake2b="08790dd3634037177eaec428651afe0da1f71dbad3423bde7ea5a6d49eab5dc011f72b175760fc55f6d8d7d820f7f3dfc369a80a1f7cb2f9f933644beb3d3711"
+source_hostdeps="autoconf automake libtool pkg-config"
+source_deps="autoconf-archive"
+imagedeps="gcc"
+hostdeps="gcc autoconf automake libtool pkg-config"
+deps="core-libs"
+
+regenerate() {
+    autotools_recursive_regen
+    cp source/config/{mh-linux,mh-unknown}
+}
+
+build() {
+    mkdir cross-build
+    cd cross-build
+    ${source_dir}/source/configure \
+        --prefix=/usr/local
+    make -j${parallelism}
+    cd ..
+
+        configure_script_path=${source_dir}/source/configure \
+    autotools_configure \
+        --with-cross-build=$(realpath cross-build)
+
+    make -j${parallelism}
+}
+
+package() {
+    DESTDIR="${dest_dir}" make install
+
+    post_package_strip
+}

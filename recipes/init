@@ -1,0 +1,23 @@
+name=init
+version=0.0
+revision=1
+source_dir="init"
+hostdeps="gcc binutils v"
+deps="core-libs"
+
+build() {
+    cp -r "${source_dir}"/. ./
+
+    local PROD_FLAG=""
+    if ! [ "$VINIX_PROD" = "no" ]; then
+        PROD_FLAG="-prod"
+    fi
+    VCROSS_COMPILER_NAME=${OS_TRIPLET}-gcc v $PROD_FLAG -gc none -os vinix .
+}
+
+package() {
+    install -d "${dest_dir}/usr/bin"
+    install init "${dest_dir}/usr/bin/"
+
+    post_package_strip
+}
