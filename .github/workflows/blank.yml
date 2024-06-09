@@ -2,8 +2,7 @@ name: Pull Files from Another Repository on Push
 env:
   SOURCE_REPO: vlang/vinix
   AUTOMATIC_MONITOR: true
-  FILES: "recipes,source-recipes,host-recipes" # seperate multiple entries with ,
-  FILES_NEW: "recipes,source-recipes,host-recipes" # seperate multiple entries with ,
+  FILES: recipes source-recipes host-recipes # seperate multiple entries with ,
   USERNAME: ${{ github.actor }}
   ADDRESS_SUFFIX: users.noreply.github.com
   TOKEN_NAME: ACCESS_TOKEN # name of token defined in the target repo's settings, needed for private repos
@@ -73,7 +72,7 @@ jobs:
         run: |
           cd $PATH_SOURCE_CHECKOUT
           $EXTRA
-          cp -u $FILES_NEW ../
+          cp -u $FILES ../
           cd ..
 
       - name: Check for changes
@@ -89,7 +88,7 @@ jobs:
         run: |
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
-          git add $FILES_NEW
+          git add $FILES
           git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
 
       - name: Push
